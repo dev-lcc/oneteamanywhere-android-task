@@ -1,6 +1,10 @@
 package io.github.devlcc.core.model
 
-enum class ActivityDayOfTheWeek(val value: Int) {
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+enum class ChallengeDayOfTheWeek(val value: Int): Parcelable {
     Monday(0),
     Tuesday(1),
     Wednesday(2),

@@ -1,6 +1,6 @@
 package io.github.devlcc.core.network.fake
 
-import io.github.devlcc.core.model.ActivityDayOfTheWeek
+import io.github.devlcc.core.model.ChallengeDayOfTheWeek
 import io.github.devlcc.core.network.HomeContentApiService
 import io.github.devlcc.core.network.dto.GetActivitiesResponse
 import kotlinx.serialization.json.Json
@@ -11,7 +11,7 @@ class FakeHomeContentApiService(
     private val json: Json,
 ): HomeContentApiService {
 
-    override suspend fun getActivities(whichDay: ActivityDayOfTheWeek): GetActivitiesResponse =
+    override suspend fun getActivities(whichDay: ChallengeDayOfTheWeek): GetActivitiesResponse =
         json.decodeFromString(JsonContent)
 
     companion object {

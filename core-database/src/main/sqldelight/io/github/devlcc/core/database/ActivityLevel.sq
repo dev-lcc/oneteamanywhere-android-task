@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS ActivityLevel
+(
+    level           INTEGER NOT NULL,
+    title           TEXT,
+    description     TEXT,
+    state           TEXT,
+
+    dayOfTheWeek    INTEGER NOT NULL
+);
+
+getActivityLevels:
+SELECT * FROM ActivityLevel;
+-- TODO:: apply paging if necessary
+
+upsertLevel:
+INSERT OR REPLACE INTO ActivityLevel(level, title, description, state, dayOfTheWeek)
+VALUES (?, ?, ?, ?, ?);
+
+removeByDay:
+DELETE FROM ActivityLevel
+WHERE dayOfTheWeek = :dayOfTheWeek;
+
+removeByDayAndLevel:
+DELETE FROM ActivityLevel
+WHERE dayOfTheWeek = :dayOfTheWeek AND level = :level;
+
+removeAll:
+DELETE FROM ActivityLevel;

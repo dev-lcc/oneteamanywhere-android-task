@@ -1,6 +1,6 @@
 package io.github.devlcc.core.network
 
-import io.github.devlcc.core.model.ActivityDayOfTheWeek
+import io.github.devlcc.core.model.ChallengeDayOfTheWeek
 import io.github.devlcc.core.network.di.testCoreNetworkKoinModule
 import io.github.devlcc.core.network.dto.GetActivitiesResponse
 import io.ktor.client.engine.HttpClientEngine
@@ -61,7 +61,7 @@ class HomeContentApiServiceTest : KoinTest {
         }
         loadKoinModules(engineModule)
 
-        val inputActivityDayOfWeek = ActivityDayOfTheWeek.entries.random()
+        val inputActivityDayOfWeek = ChallengeDayOfTheWeek.entries.random()
         val expected = json.decodeFromString(
             GetActivitiesResponse.serializer(),
             HomeContentApiServiceMock.GetActivities.success()
@@ -107,7 +107,7 @@ class HomeContentApiServiceTest : KoinTest {
         }
         loadKoinModules(engineModule)
 
-        val inputActivityDayOfWeek = ActivityDayOfTheWeek.entries.random()
+        val inputActivityDayOfWeek = ChallengeDayOfTheWeek.entries.random()
 
         //
         // WHEN

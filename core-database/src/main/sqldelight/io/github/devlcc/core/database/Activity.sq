@@ -1,0 +1,43 @@
+CREATE TABLE IF NOT EXISTS Activity
+(
+    id                  TEXT NOT NULL PRIMARY KEY,
+    challengeId         TEXT,
+    type                TEXT,
+    title               TEXT,
+    titleB              TEXT,
+    description         TEXT,
+    descriptionB        TEXT,
+    state               TEXT,   -- State Enum
+    icon                TEXT,   -- Level.Activity.Icon stringified JSON
+    lockedIcon          TEXT,    -- Level.Activity.Icon stringified JSON
+
+    level               INTEGER NOT NULL,   -- ActivityLevel.level
+    dayOfTheWeek        INTEGER NOT NULL   -- ActivityLevel.dayOfTheWeek, values from 0-6 where 0=Monday and 6=Sunday.
+);
+
+getAllActivities:
+SELECT * FROM Activity
+ORDER BY dayOfTheWeek ASC, level ASC;
+-- TODO:: apply paging if necessary
+
+getActivityById:
+SELECT * FROM Activity
+WHERE id = :id;
+
+upsertActivity:
+INSERT OR REPLACE INTO Activity(id, challengeId, type, title, titleB, description, descriptionB, state, icon, lockedIcon, level, dayOfTheWeek)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+removeById:
+DELETE FROM Activity WHERE id = :id;
+
+removeByDay:
+DELETE FROM Activity
+WHERE dayOfTheWeek = :dayOfTheWeek;
+
+removeByDayAndLevel:
+DELETE FROM Activity
+WHERE dayOfTheWeek = :dayOfTheWeek AND level = :level;
+
+removeAll:
+DELETE FROM Activity;

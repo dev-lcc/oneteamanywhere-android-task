@@ -26,21 +26,6 @@ data class LevelDTO(
         val icon: Icon? = null,
         val lockedIcon: Icon? = null
     ) {
-
-//        @Serializable
-//        enum class Type(val value: String) {
-//            @SerialName("COMMIT") Commit("COMMIT"),
-//            @SerialName("PRACTICE") Practice("PRACTICE"),
-//            @SerialName("RECAP") Recap("RECAP");
-//        }
-//
-//        @Serializable
-//        enum class State(val value: String) {
-//            @SerialName("NOT_SET") NotSet("NOT_SET"),
-//            @SerialName("LOCKED") Locked("LOCKED"),
-//            ;
-//        }
-
         @Serializable
         data class Icon (
             val file: File? = null,

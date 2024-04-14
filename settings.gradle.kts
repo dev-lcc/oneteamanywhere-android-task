@@ -23,3 +23,4 @@ rootProject.name = "Android Task"
 include(":app")
 include(":core-network")
 include(":core-model")
+include(":core-database")
