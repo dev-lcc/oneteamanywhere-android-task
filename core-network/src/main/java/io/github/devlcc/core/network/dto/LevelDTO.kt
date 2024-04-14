@@ -22,7 +22,7 @@ data class LevelDTO(
         val titleB: String? = null,
         val description: String? = null,
         val descriptionB: String? = null,
-        val state: String? = null,   // "NOT_SET" | "LOCKED"
+        val state: String? = null,   // "NOT_SET" | "COMPLETED"
         val icon: Icon? = null,
         val lockedIcon: Icon? = null
     ) {

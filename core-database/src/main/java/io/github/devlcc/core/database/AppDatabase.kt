@@ -17,5 +17,5 @@ object AppDatabase {
     const val DB_NAME = "OTAAndroidTaskDatabase.db"
 }
 
-fun AppDatabase.getAndroidSqliteDriver(context: Context) =
+fun AppDatabase.getAndroidSqliteDriver(context: Context): SqlDriver =
     AndroidSqliteDriver(OTAAndroidTaskDatabase.Schema, context, DB_NAME)

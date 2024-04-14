@@ -1,6 +1,5 @@
-package io.github.devlcc.core.network
+package io.github.devlcc.core.network.fake
 
-import io.github.devlcc.core.network.fake.FakeHomeContentApiService
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -10,7 +9,7 @@ import io.ktor.utils.io.ByteReadChannel
 import org.jetbrains.annotations.VisibleForTesting
 
 @VisibleForTesting
-object HomeContentApiServiceMock {
+object HomeContentApiServiceMockData {
 
     object GetActivities {
 

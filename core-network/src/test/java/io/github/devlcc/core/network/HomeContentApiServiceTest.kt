@@ -3,6 +3,7 @@ package io.github.devlcc.core.network
 import io.github.devlcc.core.model.ChallengeDayOfTheWeek
 import io.github.devlcc.core.network.di.testCoreNetworkKoinModule
 import io.github.devlcc.core.network.dto.GetActivitiesResponse
+import io.github.devlcc.core.network.fake.HomeContentApiServiceMockData
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -57,14 +58,14 @@ class HomeContentApiServiceTest : KoinTest {
         //
         val json: Json = get()
         val engineModule = module {
-            single<HttpClientEngine> { HomeContentApiServiceMock.GetActivities.mockEngineStatusSuccess() }
+            single<HttpClientEngine> { HomeContentApiServiceMockData.GetActivities.mockEngineStatusSuccess() }
         }
         loadKoinModules(engineModule)
 
         val inputActivityDayOfWeek = ChallengeDayOfTheWeek.entries.random()
         val expected = json.decodeFromString(
             GetActivitiesResponse.serializer(),
-            HomeContentApiServiceMock.GetActivities.success()
+            HomeContentApiServiceMockData.GetActivities.success()
         )
 
         //
@@ -103,7 +104,7 @@ class HomeContentApiServiceTest : KoinTest {
         //
         val json: Json = get()
         val engineModule = module {
-            single<HttpClientEngine> { HomeContentApiServiceMock.GetActivities.mockEngineStatusError() }
+            single<HttpClientEngine> { HomeContentApiServiceMockData.GetActivities.mockEngineStatusError() }
         }
         loadKoinModules(engineModule)
 

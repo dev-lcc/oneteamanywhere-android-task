@@ -20,6 +20,12 @@ SELECT * FROM Activity
 ORDER BY dayOfTheWeek ASC, level ASC;
 -- TODO:: apply paging if necessary
 
+getActivitiesByDay:
+SELECT * FROM Activity
+WHERE dayOfTheWeek = :dayOfTheWeek
+ORDER BY dayOfTheWeek ASC, level ASC;
+-- TODO:: apply paging if necessary
+
 getActivityById:
 SELECT * FROM Activity
 WHERE id = :id;

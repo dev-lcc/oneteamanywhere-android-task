@@ -9,6 +9,10 @@ interface ActivityDao {
 
     fun getAllActivitiesStream(): Flow<List<LevelWithActivitiesEntity>>
 
+    suspend fun getActivitiesByDay(dayOfTheWeek: Int): List<LevelWithActivitiesEntity>
+
+    fun getActivitiesByDayStream(dayOfTheWeek: Int): Flow<List<LevelWithActivitiesEntity>>
+
     suspend fun getActivityById(
         id: String
     ): Activity

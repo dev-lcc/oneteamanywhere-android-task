@@ -12,6 +12,11 @@ getActivityLevels:
 SELECT * FROM ActivityLevel;
 -- TODO:: apply paging if necessary
 
+getActivityLevelsByDay:
+SELECT * FROM ActivityLevel
+WHERE dayOfTheWeek = :dayOfTheWeek
+;
+
 upsertLevel:
 INSERT OR REPLACE INTO ActivityLevel(level, title, description, state, dayOfTheWeek)
 VALUES (?, ?, ?, ?, ?);

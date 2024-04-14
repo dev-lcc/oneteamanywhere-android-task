@@ -4,7 +4,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import io.github.devlcc.core.database.entities.LevelWithActivitiesEntity
-import io.github.devlcc.core.model.ChallengeDayOfTheWeek
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -40,6 +39,34 @@ class ActivityDaoImpl(
             activityQueries.getAllActivities().asFlow().mapToList(ioCoroutineDispatcher)
         ) { allLevels, allActivities ->
             allLevels.associateWith { key -> allActivities.filter { activity -> activity.level == key.level } }
+                .map { (key, value) ->
+                    LevelWithActivitiesEntity(key, value)
+                }
+        }
+    }
+
+    override suspend fun getActivitiesByDay(dayOfTheWeek: Int): List<LevelWithActivitiesEntity> {
+        val levelsByDay = withContext(ioCoroutineDispatcher) {
+            activityLevelQueries.getActivityLevelsByDay(dayOfTheWeek = dayOfTheWeek.toLong())
+                .executeAsList()
+        }
+        val activitiesByDay = withContext(ioCoroutineDispatcher) {
+            activityQueries.getActivitiesByDay(dayOfTheWeek = dayOfTheWeek.toLong())
+                .executeAsList()
+        }
+
+        return levelsByDay.associateWith { key -> activitiesByDay.filter { activity -> activity.level == key.level } }
+            .map { (key, value) ->
+                LevelWithActivitiesEntity(key, value)
+            }
+    }
+
+    override fun getActivitiesByDayStream(dayOfTheWeek: Int): Flow<List<LevelWithActivitiesEntity>> {
+        return combine(
+            activityLevelQueries.getActivityLevelsByDay(dayOfTheWeek = dayOfTheWeek.toLong()).asFlow().mapToList(ioCoroutineDispatcher),
+            activityQueries.getActivitiesByDay(dayOfTheWeek = dayOfTheWeek.toLong()).asFlow().mapToList(ioCoroutineDispatcher)
+        ) { levelsByDay, activitiesByDay ->
+            levelsByDay.associateWith { key -> activitiesByDay.filter { activity -> activity.level == key.level } }
                 .map { (key, value) ->
                     LevelWithActivitiesEntity(key, value)
                 }

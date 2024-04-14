@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
-    namespace = "io.github.devlcc.core.network"
+    namespace = "io.github.devlcc.core.data"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
@@ -39,6 +38,8 @@ android {
 
 dependencies {
     implementation(project(":core-model"))
+    api(project(":core-network"))
+    api(project(":core-database"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -47,16 +48,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.kotlinx.coroutines.test)
 
-    api/*implementation*/(libs.ktor.client.core)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.engine.okhttp)
-    implementation(libs.ktor.client.serialization)
-    implementation(libs.ktor.client.contentNegotiation)
-    api/*testImplementation*/(libs.ktor.client.mock)
+    implementation(libs.store)
 
     implementation(libs.koin.core)
     testImplementation(libs.koin.test)
 
     implementation(libs.kotlinx.serialization.json)
-
 }
