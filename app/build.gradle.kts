@@ -37,11 +37,13 @@ android {
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs = listOf(
-            "-Xstring-concat=inline"
+            "-Xstring-concat=inline",
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
         )
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.androidXComposeCompiler.get()
@@ -54,6 +56,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-model"))
+    implementation(project(":core-data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -63,10 +67,12 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.navigation.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -84,6 +90,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    implementation(libs.store)
 
     implementation(libs.coil3.kt)
     implementation(libs.coil3.kt.compose)

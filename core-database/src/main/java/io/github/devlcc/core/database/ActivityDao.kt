@@ -1,17 +1,16 @@
 package io.github.devlcc.core.database
 
-import io.github.devlcc.core.database.entities.LevelWithActivitiesEntity
 import kotlinx.coroutines.flow.Flow
 
 interface ActivityDao {
 
-    suspend fun getAllActivities(): List<LevelWithActivitiesEntity>
+    suspend fun getAllActivities(): List<Activity/*LevelWithActivitiesEntity*/>
 
-    fun getAllActivitiesStream(): Flow<List<LevelWithActivitiesEntity>>
+    fun getAllActivitiesStream(): Flow<List<Activity/*LevelWithActivitiesEntity*/>>
 
-    suspend fun getActivitiesByDay(dayOfTheWeek: Int): List<LevelWithActivitiesEntity>
+    suspend fun getActivitiesByDay(dayOfTheWeek: Int): List<Activity/*LevelWithActivitiesEntity*/>
 
-    fun getActivitiesByDayStream(dayOfTheWeek: Int): Flow<List<LevelWithActivitiesEntity>>
+    fun getActivitiesByDayStream(dayOfTheWeek: Int): Flow<List<Activity/*LevelWithActivitiesEntity*/>>
 
     suspend fun getActivityById(
         id: String
@@ -21,7 +20,7 @@ interface ActivityDao {
         id: String
     ): Flow<Activity>
 
-    suspend fun upsert(vararg levels: LevelWithActivitiesEntity)
+    suspend fun upsert(vararg activities/*levels*/: Activity/*LevelWithActivitiesEntity*/)
 
     fun removeActivityById(id: String)
 

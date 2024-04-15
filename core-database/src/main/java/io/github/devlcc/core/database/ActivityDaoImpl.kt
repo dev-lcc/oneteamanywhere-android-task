@@ -3,10 +3,10 @@ package io.github.devlcc.core.database
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
-import io.github.devlcc.core.database.entities.LevelWithActivitiesEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withContext
 
 class ActivityDaoImpl(
@@ -15,62 +15,70 @@ class ActivityDaoImpl(
 ): ActivityDao {
 
     private val activityQueries: ActivityQueries = database.activityQueries
-    private val activityLevelQueries: ActivityLevelQueries = database.activityLevelQueries
 
-    override suspend fun getAllActivities(): List<LevelWithActivitiesEntity> {
-        val allLevels = withContext(ioCoroutineDispatcher) {
+    override suspend fun getAllActivities(): List<Activity/*LevelWithActivitiesEntity*/> {
+        /*val allLevels = withContext(ioCoroutineDispatcher) {
             activityLevelQueries.getActivityLevels()
                 .executeAsList()
-        }
+        }*/
         val allActivities = withContext(ioCoroutineDispatcher) {
             activityQueries.getAllActivities()
                 .executeAsList()
         }
 
-        return allLevels.associateWith { key -> allActivities.filter { activity -> activity.level == key.level } }
+        return allActivities/*allLevels.associateWith { key -> allActivities.filter { activity -> activity.level == key.level } }
             .map { (key, value) ->
                 LevelWithActivitiesEntity(key, value)
-            }
+            }*/
     }
 
-    override fun getAllActivitiesStream(): Flow<List<LevelWithActivitiesEntity>> {
-        return combine(
-            activityLevelQueries.getActivityLevels().asFlow().mapToList(ioCoroutineDispatcher),
-            activityQueries.getAllActivities().asFlow().mapToList(ioCoroutineDispatcher)
-        ) { allLevels, allActivities ->
-            allLevels.associateWith { key -> allActivities.filter { activity -> activity.level == key.level } }
-                .map { (key, value) ->
-                    LevelWithActivitiesEntity(key, value)
-                }
-        }
+    override fun getAllActivitiesStream(): Flow<List<Activity/*LevelWithActivitiesEntity*/>> {
+        return activityQueries.getAllActivities().asFlow().mapToList(ioCoroutineDispatcher)
+
+//        return combine(
+//            activityLevelQueries.getActivityLevels().asFlow().mapToList(ioCoroutineDispatcher),
+//            activityQueries.getAllActivities().asFlow().mapToList(ioCoroutineDispatcher)
+//        ) { allLevels, allActivities ->
+//            allLevels.associateWith { key -> allActivities.filter { activity -> activity.level == key.level } }
+//                .map { (key, value) ->
+//                    LevelWithActivitiesEntity(key, value)
+//                }
+//        }
+//            .distinctUntilChanged()
     }
 
-    override suspend fun getActivitiesByDay(dayOfTheWeek: Int): List<LevelWithActivitiesEntity> {
-        val levelsByDay = withContext(ioCoroutineDispatcher) {
-            activityLevelQueries.getActivityLevelsByDay(dayOfTheWeek = dayOfTheWeek.toLong())
-                .executeAsList()
-        }
+    override suspend fun getActivitiesByDay(dayOfTheWeek: Int): List<Activity/*LevelWithActivitiesEntity*/> {
+//        val levelsByDay = withContext(ioCoroutineDispatcher) {
+//            activityLevelQueries.getActivityLevelsByDay(dayOfTheWeek = dayOfTheWeek.toLong())
+//                .executeAsList()
+//        }
         val activitiesByDay = withContext(ioCoroutineDispatcher) {
             activityQueries.getActivitiesByDay(dayOfTheWeek = dayOfTheWeek.toLong())
                 .executeAsList()
         }
 
-        return levelsByDay.associateWith { key -> activitiesByDay.filter { activity -> activity.level == key.level } }
-            .map { (key, value) ->
-                LevelWithActivitiesEntity(key, value)
-            }
+//        return levelsByDay.associateWith { key -> activitiesByDay.filter { activity -> activity.level == key.level } }
+//            .map { (key, value) ->
+//                LevelWithActivitiesEntity(key, value)
+//            }
+        return activitiesByDay
     }
 
-    override fun getActivitiesByDayStream(dayOfTheWeek: Int): Flow<List<LevelWithActivitiesEntity>> {
-        return combine(
-            activityLevelQueries.getActivityLevelsByDay(dayOfTheWeek = dayOfTheWeek.toLong()).asFlow().mapToList(ioCoroutineDispatcher),
-            activityQueries.getActivitiesByDay(dayOfTheWeek = dayOfTheWeek.toLong()).asFlow().mapToList(ioCoroutineDispatcher)
-        ) { levelsByDay, activitiesByDay ->
-            levelsByDay.associateWith { key -> activitiesByDay.filter { activity -> activity.level == key.level } }
-                .map { (key, value) ->
-                    LevelWithActivitiesEntity(key, value)
-                }
-        }
+    override fun getActivitiesByDayStream(dayOfTheWeek: Int): Flow<List<Activity/*LevelWithActivitiesEntity*/>> {
+//        return combine(
+//            activityLevelQueries.getActivityLevelsByDay(dayOfTheWeek = dayOfTheWeek.toLong()).asFlow().mapToList(ioCoroutineDispatcher),
+//            activityQueries.getActivitiesByDay(dayOfTheWeek = dayOfTheWeek.toLong()).asFlow().mapToList(ioCoroutineDispatcher)
+//        ) { levelsByDay, activitiesByDay ->
+//            levelsByDay.associateWith { key -> activitiesByDay.filter { activity -> activity.level == key.level } }
+//                .map { (key, value) ->
+//                    LevelWithActivitiesEntity(key, value)
+//                }
+//        }
+//            .distinctUntilChanged()
+
+        return activityQueries.getActivitiesByDay(dayOfTheWeek = dayOfTheWeek.toLong())
+            .asFlow()
+            .mapToList(ioCoroutineDispatcher)
     }
 
     override suspend fun getActivityById(id: String): Activity {
@@ -85,18 +93,18 @@ class ActivityDaoImpl(
             .mapToOne(ioCoroutineDispatcher)
     }
 
-    override suspend fun upsert(vararg levels: LevelWithActivitiesEntity) {
+    override suspend fun upsert(vararg activities: Activity/*LevelWithActivitiesEntity*/) {
 
         database.transaction {
-            levels.forEach { (level, activities) ->
-                activityLevelQueries.upsertLevel(
-                    level = level.level,
-                    title = level.title,
-                    description = level.description,
-                    state = level.state,
-                    dayOfTheWeek = level.dayOfTheWeek,
-                )
-
+//            levels.forEach { (level, activities) ->
+//                activityLevelQueries.upsertLevel(
+//                    level = level.level,
+//                    title = level.title,
+//                    description = level.description,
+//                    state = level.state,
+//                    dayOfTheWeek = level.dayOfTheWeek,
+//                )
+//
                 activities.forEach { activity ->
                     activityQueries.upsertActivity(
                         id = activity.id,
@@ -110,10 +118,13 @@ class ActivityDaoImpl(
                         icon = activity.icon,
                         lockedIcon = activity.lockedIcon,
                         level = activity.level,
+                        levelTitle = activity.levelTitle,
+                        levelDescription = activity.levelDescription,
+                        levelState = activity.levelState,
                         dayOfTheWeek = activity.dayOfTheWeek,
                     )
                 }
-            }
+//            }
         }
     }
 
@@ -126,10 +137,10 @@ class ActivityDaoImpl(
     override fun removeActivities(day: Int, level: Int?) {
         database.transaction {
             if(level != null) {
-                activityLevelQueries.removeByDayAndLevel(dayOfTheWeek = day.toLong(), level = level.toLong())
+//                activityLevelQueries.removeByDayAndLevel(dayOfTheWeek = day.toLong(), level = level.toLong())
                 activityQueries.removeByDayAndLevel(dayOfTheWeek = day.toLong(), level = level.toLong())
             } else {
-                activityLevelQueries.removeByDay(dayOfTheWeek = day.toLong())
+//                activityLevelQueries.removeByDay(dayOfTheWeek = day.toLong())
                 activityQueries.removeByDay(dayOfTheWeek = day.toLong())
             }
         }
@@ -137,7 +148,7 @@ class ActivityDaoImpl(
 
     override fun removeAll() {
         database.transaction {
-            activityLevelQueries.removeAll()
+//            activityLevelQueries.removeAll()
             activityQueries.removeAll()
         }
     }

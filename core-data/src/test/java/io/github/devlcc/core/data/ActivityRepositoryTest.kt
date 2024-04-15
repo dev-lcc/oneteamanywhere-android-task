@@ -3,10 +3,11 @@ package io.github.devlcc.core.data
 import io.github.devlcc.core.data.converters.mapToEntity
 import io.github.devlcc.core.data.converters.mapToModel
 import io.github.devlcc.core.data.di.getCoreDataKoinModule
+import io.github.devlcc.core.database.Activity
 import io.github.devlcc.core.database.ActivityDao
 import io.github.devlcc.core.database.di.testCoreDatabaseKoinModule
-import io.github.devlcc.core.database.entities.LevelWithActivitiesEntity
 import io.github.devlcc.core.database.fake.FakeLevelsWithActivitiesData
+import io.github.devlcc.core.model.ChallengeActivity
 import io.github.devlcc.core.model.ChallengeDayOfTheWeek
 import io.github.devlcc.core.model.ChallengeLevel
 import io.github.devlcc.core.network.di.testCoreNetworkKoinModule
@@ -114,19 +115,71 @@ class ActivityRepositoryTest: KoinTest {
         loadKoinModules(engineModule)
 
         val inputKey = ChallengeDayOfTheWeek.entries.random()
-        val expected = getActivitiesResponse.levels
-            .map { level ->
-                level.mapToEntity(dayOfTheWeek = inputKey).mapToModel(dayOfTheWeek = inputKey)
-                    .copy(
-                        activities = level.activities.map { activity ->
-                            activity.mapToEntity(
-                                level = level.level!!.toInt(10),
+
+        val expected = mutableListOf<ChallengeLevel>().apply {
+            // Collect ALL Activities
+            val activities = getActivitiesResponse.levels.fold(listOf<Activity>()) { accumulated, level ->
+                ArrayList(accumulated).apply {
+                    addAll(
+                        level.activities.map { activityDTO ->
+                            activityDTO.mapToEntity(
+                                level = level,
                                 dayOfTheWeek = inputKey,
                                 json = json,
-                            ).mapToModel(json)
+                            )
                         }
                     )
+                }
             }
+
+            // Then, Group by Level
+            activities.forEach { activity ->
+                val level = activity.level.toInt()
+                add(
+                    ChallengeLevel(
+                        level = level,
+                        dayOfTheWeek = inputKey,
+                        title = activity.levelTitle,
+                        description = activity.levelDescription,
+                        state = activity.levelState?.let { levelState ->
+                            ChallengeLevel.State.entries.find { it.value == levelState }
+                        },
+                        activities = activities
+                            .filter {
+                                it.level == level.toLong()
+                                        && it.dayOfTheWeek == inputKey.value.toLong()
+                            }.map { it.mapToModel(json) },
+                    )
+                )
+            }
+        }.distinct()
+
+//        val expected = getActivitiesResponse.levels.fold(listOf<ChallengeActivity>()) { accumulated, newActivities ->
+//            ArrayList(accumulated).apply {
+//                addAll(
+//                    newActivities.activities.map { activityDTO ->
+//                        activityDTO.mapToEntity(
+//                            level = newActivities.level?.toInt() ?: 0,
+//                            dayOfTheWeek = inputKey,
+//                            json = json,
+//                        ).mapToModel(json)
+//                    }
+//                )
+//            }
+//        }
+//        val expected = getActivitiesResponse.levels
+//            .map { level ->
+//                level.mapToEntity(dayOfTheWeek = inputKey).mapToModel(dayOfTheWeek = inputKey)
+//                    .copy(
+//                        activities = level.activities.map { activity ->
+//                            activity.mapToEntity(
+//                                level = level.level!!.toInt(10),
+//                                dayOfTheWeek = inputKey,
+//                                json = json,
+//                            ).mapToModel(json)
+//                        }
+//                    )
+//            }
         println("Store - Fresh - Network ONLY() -> expected = \n${json.encodeToString(ListSerializer(ChallengeLevel.serializer()), expected)}")
 
 
@@ -161,7 +214,43 @@ class ActivityRepositoryTest: KoinTest {
         loadKoinModules(engineModule)
 
         val inputKey = ChallengeDayOfTheWeek.entries.random()
-        val expectedFreshValue = getActivitiesResponse.levels
+        val expectedFreshValue = mutableListOf<ChallengeLevel>().apply {
+            // Collect ALL Activities
+            val activities = getActivitiesResponse.levels.fold(listOf<Activity>()) { accumulated, level ->
+                ArrayList(accumulated).apply {
+                    addAll(
+                        level.activities.map { activityDTO ->
+                            activityDTO.mapToEntity(
+                                level = level,
+                                dayOfTheWeek = inputKey,
+                                json = json,
+                            )
+                        }
+                    )
+                }
+            }
+
+            // Then, Group by Level
+            activities.forEach { activity ->
+                val level = activity.level.toInt()
+                add(
+                    ChallengeLevel(
+                        level = level,
+                        title = activity.levelTitle,
+                        dayOfTheWeek = inputKey,
+                        description = activity.levelDescription,
+                        state = activity.levelState?.let { levelState ->
+                            ChallengeLevel.State.entries.find { it.value == levelState }
+                        },
+                        activities = activities
+                            .filter {
+                                it.level == level.toLong()
+                                        && it.dayOfTheWeek == inputKey.value.toLong()
+                            }.map { it.mapToModel(json) },
+                    )
+                )
+            }
+        }.distinct()/*getActivitiesResponse.levels
             .map { level ->
                 level.mapToEntity(dayOfTheWeek = inputKey).mapToModel(dayOfTheWeek = inputKey)
                     .copy(
@@ -173,18 +262,23 @@ class ActivityRepositoryTest: KoinTest {
                             ).mapToModel(json)
                         }
                     )
-            }
+            }*/
         println("Store - Fresh - Network With Cache() -> expected = \n${json.encodeToString(ListSerializer(ChallengeLevel.serializer()), expectedFreshValue)}")
 
         // Pre-populate Local Database
         val expectedCachedValue = expectedFreshValue.subList(0, expectedFreshValue.size - 2)
         val cacheSampleData = expectedCachedValue.map { level ->
-            LevelWithActivitiesEntity(
-                level = level.mapToEntity(dayOfTheWeek = inputKey),
-                activities = level.activities.map { activity -> activity.mapToEntity(level = level.level!!.toInt(), dayOfTheWeek = inputKey, json = json) }
-            )
-
+//            LevelWithActivitiesEntity(
+//                level = level.mapToEntity(dayOfTheWeek = inputKey),
+//                activities = level.activities.map { activity -> activity.mapToEntity(level = level.level!!.toInt(), dayOfTheWeek = inputKey, json = json) }
+//            )
+            level.activities.map { activity -> activity.mapToEntity(level = level, dayOfTheWeek = inputKey, json = json) }
         }
+            .fold(listOf<Activity>()) { accumulated, newActivities ->
+                ArrayList(accumulated).apply {
+                    addAll(newActivities)
+                }
+            }
         println("Store - Fresh - Network With Cache() -> cacheSampleData = \n$cacheSampleData")
         val activityDao: ActivityDao = get()
         activityDao.upsert(*(cacheSampleData).toTypedArray())

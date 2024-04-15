@@ -60,9 +60,9 @@ class ActivityDaoTest : KoinTest {
         // GIVEN
         //
         val sampleCount = 3
-        val levelWithActivities = FakeLevelsWithActivitiesData.get(sampleCount).random()
-        activityDao.upsert(levelWithActivities)
-        val expected = levelWithActivities.activities.random()
+        val levelWithActivities = FakeLevelsWithActivitiesData.get(sampleCount)
+        activityDao.upsert(*(levelWithActivities).toTypedArray())
+        val expected = levelWithActivities.random()
         println("Get Activity By Id() -> expected = \n$expected")
 
         val inputId = expected.id
@@ -86,9 +86,9 @@ class ActivityDaoTest : KoinTest {
         // GIVEN
         //
         val sampleCount = 3
-        val levelWithActivities = FakeLevelsWithActivitiesData.get(sampleCount).random()
-        activityDao.upsert(levelWithActivities)
-        val expected = levelWithActivities.activities.random()
+        val levelWithActivities = FakeLevelsWithActivitiesData.get(sampleCount)
+        activityDao.upsert(*(levelWithActivities).toTypedArray())
+        val expected = levelWithActivities.random()
         println("Remove Activity By Id() -> expected = \n$expected")
 
         val inputId = expected.id
@@ -105,10 +105,8 @@ class ActivityDaoTest : KoinTest {
         val actual = activityDao.getAllActivities()
         println("Remove Activity By Id() -> actual = \n$actual")
         assertTrue {
-            actual.none { lvlActivities ->
-                lvlActivities.activities.any { activity ->
-                    activity.id == inputId
-                }
+            actual.none { activity ->
+                activity.id == inputId
             }
         }
 
@@ -120,9 +118,9 @@ class ActivityDaoTest : KoinTest {
         // GIVEN
         //
         val sampleCount = 3
-        val levelWithActivities = FakeLevelsWithActivitiesData.get(sampleCount).random()
-        activityDao.upsert(levelWithActivities)
-        val expected = levelWithActivities.activities.random()
+        val levelWithActivities = FakeLevelsWithActivitiesData.get(sampleCount)
+        activityDao.upsert(*(levelWithActivities).toTypedArray())
+        val expected = levelWithActivities.random()
         println("Remove Activities By Day and Level() -> expected = \n$expected")
 
         val inputDay = expected.dayOfTheWeek.toInt()
@@ -143,11 +141,9 @@ class ActivityDaoTest : KoinTest {
         val actual = activityDao.getAllActivities()
         println("Remove Activities By Day and Level() -> actual = \n$actual")
         assertTrue {
-            actual.none { lvlActivities ->
-                lvlActivities.activities.any { activity ->
-                    activity.dayOfTheWeek == inputDay.toLong()
-                            || activity.level == inputLevel.toLong()
-                }
+            actual.none { activity ->
+                activity.dayOfTheWeek == inputDay.toLong()
+                        || activity.level == inputLevel.toLong()
             }
         }
 

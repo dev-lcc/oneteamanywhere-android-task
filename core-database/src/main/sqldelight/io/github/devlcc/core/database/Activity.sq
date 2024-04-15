@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS Activity
     lockedIcon          TEXT,    -- Level.Activity.Icon stringified JSON
 
     level               INTEGER NOT NULL,   -- ActivityLevel.level
+    levelTitle          TEXT,
+    levelDescription    TEXT,
+    levelState          TEXT,
     dayOfTheWeek        INTEGER NOT NULL   -- ActivityLevel.dayOfTheWeek, values from 0-6 where 0=Monday and 6=Sunday.
 );
 
@@ -23,7 +26,7 @@ ORDER BY dayOfTheWeek ASC, level ASC;
 getActivitiesByDay:
 SELECT * FROM Activity
 WHERE dayOfTheWeek = :dayOfTheWeek
-ORDER BY dayOfTheWeek ASC, level ASC;
+ORDER BY level ASC;
 -- TODO:: apply paging if necessary
 
 getActivityById:
@@ -31,8 +34,8 @@ SELECT * FROM Activity
 WHERE id = :id;
 
 upsertActivity:
-INSERT OR REPLACE INTO Activity(id, challengeId, type, title, titleB, description, descriptionB, state, icon, lockedIcon, level, dayOfTheWeek)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO Activity(id, challengeId, type, title, titleB, description, descriptionB, state, icon, lockedIcon, level, levelTitle, levelDescription, levelState, dayOfTheWeek)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? ,?);
 
 removeById:
 DELETE FROM Activity WHERE id = :id;

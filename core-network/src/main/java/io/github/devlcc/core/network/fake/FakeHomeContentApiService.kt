@@ -12,7 +12,8 @@ class FakeHomeContentApiService(
 ): HomeContentApiService {
 
     override suspend fun getActivities(whichDay: ChallengeDayOfTheWeek): GetActivitiesResponse =
-        json.decodeFromString(JsonContent)
+        if(whichDay == ChallengeDayOfTheWeek.Monday) json.decodeFromString(JsonContent)
+        else GetActivitiesResponse(levels = listOf())
 
     companion object {
         internal val JsonContent = """

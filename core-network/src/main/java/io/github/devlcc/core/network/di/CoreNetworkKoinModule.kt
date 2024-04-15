@@ -2,6 +2,7 @@ package io.github.devlcc.core.network.di
 
 import io.github.devlcc.core.network.HomeContentApiService
 import io.github.devlcc.core.network.fake.FakeHomeContentApiService
+import io.github.devlcc.core.network.impl.HomeContentApiServiceImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
@@ -18,7 +19,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 fun getCoreNetworkKoinModule(
-    restApiEndpoint: String = "https://private-1e2345-somemockapiendpoint.apiary-mock.com",
+    // This can be different based on buildType OR buildFlavor
+    restApiEndpoint: String = "https://private-905cf-otaandroidtask.apiary-mock.com",
     isDebug: Boolean = true,
 ): Module = module {
 
@@ -41,6 +43,10 @@ fun getCoreNetworkKoinModule(
         FakeHomeContentApiService(
             json = get(),
         )
+//        HomeContentApiServiceImpl(
+//            restApiEndpoint = restApiEndpoint,
+//            ktorClient = get(),
+//        )
     }
 
 }

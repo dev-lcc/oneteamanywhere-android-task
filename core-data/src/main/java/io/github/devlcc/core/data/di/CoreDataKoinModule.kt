@@ -2,6 +2,7 @@ package io.github.devlcc.core.data.di
 
 import app.cash.sqldelight.db.SqlDriver
 import io.github.devlcc.core.data.ActivityRepository
+import io.github.devlcc.core.data.UserRepository
 import io.github.devlcc.core.database.AppDatabase
 import io.github.devlcc.core.database.di.getCoreDatabaseKoinModule
 import io.github.devlcc.core.database.getAndroidSqliteDriver
@@ -14,7 +15,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 fun getCoreDataKoinModule(
-    restApiEndpoint: String = "https://private-1e2345-somemockapiendpoint.apiary-mock.com",
+    restApiEndpoint: String = "https://private-905cf-otaandroidtask.apiary-mock.com",
     isDebug: Boolean = true,
 ): Module = module {
 
@@ -50,6 +51,10 @@ fun getCoreDataKoinModule(
             activityLocalDao = get(),
             json = get(),
         )
+    }
+
+    single {
+        UserRepository()
     }
     // TODO:: Define other Repository instances here...
 }

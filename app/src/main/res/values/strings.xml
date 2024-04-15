@@ -1,3 +1,23 @@
 <resources>
-    <string name="app_name">Android Task</string>
+    <string name="app_name">OTA Android Task</string>
+
+    <string name="something_went_wrong_try_again">Something went wrong. Please try again…</string>
+
+    <string name="journey_status_angry">Angry</string>
+    <string name="journey_status_taming_temper">Timing Temper</string>
+    <string name="journey_status_calm">Calm</string>
+    <string name="journey_status_interested">Interested</string>
+    <string name="journey_status_happy">Happy</string>
+
+    <string name="home_action_journey">Journey</string>
+    <string name="home_empty_content_label">No activities for this day.\nPlease try again later…</string>
+    <string name="home_level_empty_activities">No Activities available for this level…</string>
+
+    <string name="home_day_tracker_monday">MON</string>
+    <string name="home_day_tracker_tuesday">TUE</string>
+    <string name="home_day_tracker_wednesday">WED</string>
+    <string name="home_day_tracker_thursday">THU</string>
+    <string name="home_day_tracker_friday">FRI</string>
+    <string name="home_day_tracker_saturday">SAT</string>
+    <string name="home_day_tracker_sunday">SUN</string>
 </resources>
