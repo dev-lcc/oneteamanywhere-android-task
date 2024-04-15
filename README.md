@@ -32,3 +32,12 @@
 
 ## How to Build Project
 - Just run the app as-is.
+
+## Remaining Features that are yet to be addressed
+- [ ] `ActivityRepository` actual use of Store5 framework to handle data persistence and caching.
+  - for some reason, my local database implementation had some issues where it infinitely emits different sorts of Level list data which causes a never ending recomposition(Loading<->Render Levels List<->Loading...)
+  - For the meantime, I just did the easy way by using StateFlow to persist the data(fetched from REST API) in-memory.
+- [ ] Comprehensive test cases for `HomeScreenViewModel`
+  - I ran out of time to complete the test cases. It is also due to the above issue(ActivityRepository -> Store5 -> Local Database issue) which took me a lot of time debugging but to no avail.
+- [ ] Under Home Screen, Level -> Activities Icons: I deliberately made the each Icon fixed because I no longer had time to implement a PDF renderer to render each activity icon.
+  - from the response, Activity.Icon content type is a `application/pdf` content(i.e. [Chapter_05__Lesson_02__State_Active.pdf](https://assets.ctfassets.net/37k4ti9zbz4t/7qfuLW6KOLr5wARa6y1iiJ/d9fe08d9680ebe8fa1d02b056e9d9f61/Chapter_05__Lesson_02__State_Active.pdf))
